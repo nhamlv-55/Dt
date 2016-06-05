@@ -40,14 +40,27 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBOutlet weak var ImageView: UIImageView!
 
+
+    @IBOutlet weak var Share: UIButton!
     var cachedImage: UIImage!
 
     var photoPicked: Bool!
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photoPicked = false
+//        ImageView.addConstraint(NSLayoutConstraint)
+        let ratioConstraint = NSLayoutConstraint(item:self.ImageView,
+                                                attribute:NSLayoutAttribute.Height,
+                                                relatedBy:NSLayoutRelation.Equal,
+                                                toItem:self.ImageView,
+                                                attribute:NSLayoutAttribute.Width,
+                                                multiplier:1.0,
+                                                constant:0);
+        ImageView.addConstraint(ratioConstraint)
+        ImageView.layer.borderWidth = 2
+        ImageView.layer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5).CGColor
         // Do any additional setup after loading the view, typically from a nib.
-        
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -98,7 +111,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
 
-    
+
+    @IBAction func ShareAction(sender: UIButton) {
+        print("call share")
+        if let myWebsite = NSURL(string: "http://0.0.0.0:8080/") {
+            let objectsToShare = [self.cachedImage]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+
+            activityVC.popoverPresentationController?.sourceView = sender
+            self.presentViewController(activityVC, animated: true, completion: nil)
+        }
+    }
 //TODO:    after picking the image, can call the camera here?
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         print(picker.sourceType)
@@ -137,27 +160,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             }
         }
     }
-
-//    func savedImageAlert(){
-//        let alert:UIAlertView = UIAlertView()
-//        alert.title = "Saved!"
-//        alert.message = "Your picture was saved to Camera Roll"
-//        alert.delegate = self
-//        alert.addButtonWithTitle("Ok")
-//        alert.show()
-//    }
-
-
-//    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-//        print("Got an image")
-//    }
-//
-//    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-//        print("User canceled image")
-//        dismissViewControllerAnimated(true, completion: {
-//            // Anything you want to happen when the user selects cancel
-//        })
-//    }
 
     func cropToSquare(image: UIImage, photoPicked: Bool) -> UIImage {
         print("call crop")
@@ -212,6 +214,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             UIGraphicsEndImageContext();
         }
+        self.ImageView.image = resultImage
+        self.cachedImage = resultImage
         return resultImage
 
     }
