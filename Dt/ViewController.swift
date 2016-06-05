@@ -106,6 +106,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             print("use the camera")
             let imageToSave = info[UIImagePickerControllerOriginalImage] as! UIImage
             UIImageWriteToSavedPhotosAlbum(self.cropToSquare(imageToSave, photoPicked: photoPicked), nil, nil, nil)
+            photoPicked=false
             self.dismissViewControllerAnimated(true, completion: nil)
 
         }else{//Open an image
@@ -193,11 +194,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
             // Create a new image based on the imageRef and rotate back to the original orientation
             resultImage = UIImage(CGImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+
         }
         if(photoPicked==true){
             resultImage = UIImage(CGImage: cachedImage.CGImage!)
-        }
+            /*  combining the overlay and the user-photo  */
+            UIGraphicsBeginImageContext( CGSizeMake(cgwidth,cgwidth) );
 
+            /*  for some reason I have to push the user-photo
+             down 60 pixels for it to show correctly as it
+             was edited.
+             */
+            contextImage.drawAtPoint(CGPoint(x: 0, y: 0))
+            cachedImage.drawAtPoint(CGPoint(x: cgwidth/2, y: 0))
+
+            resultImage = UIGraphicsGetImageFromCurrentImageContext();
+            
+            UIGraphicsEndImageContext();
+        }
         return resultImage
 
     }
