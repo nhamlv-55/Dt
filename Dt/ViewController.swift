@@ -30,16 +30,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     
     @IBOutlet weak var PhotoLib: UIButton!
-    
-    
-    
-    
-    @IBOutlet weak var Camera: UIButton!
-    
-    
-    
-    @IBOutlet weak var ImageView: UIImageView!
 
+    @IBOutlet weak var Camera: UIButton!
+
+    @IBOutlet weak var ImageView: UIImageView!
 
     @IBOutlet weak var Share: UIButton!
     var cachedImage: UIImage!
@@ -48,7 +42,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photoPicked = false
-//        ImageView.addConstraint(NSLayoutConstraint)
         let ratioConstraint = NSLayoutConstraint(item:self.ImageView,
                                                 attribute:NSLayoutAttribute.Height,
                                                 relatedBy:NSLayoutRelation.Equal,
@@ -71,8 +64,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.Portrait
     }
-    
-    
 
     @IBAction func PhotoLibAction(sender: UIButton) {
         let picker = UIImagePickerController()
@@ -84,7 +75,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         presentViewController(picker, animated: true, completion: nil)
         
     }
-    
     
     @IBAction func CameraAction(sender: UIButton) {
         let picker = UIImagePickerController()
@@ -104,8 +94,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         overlayFrame.addSubview(overlayImage2)
         overlayFrame.alpha = 0.5
 
-//        overlayView.addSubview(overlayImage)
-
         picker.cameraOverlayView = overlayFrame
         presentViewController(picker, animated: true, completion: nil)
         
@@ -114,13 +102,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     @IBAction func ShareAction(sender: UIButton) {
         print("call share")
-        if let myWebsite = NSURL(string: "http://0.0.0.0:8080/") {
             let objectsToShare = [self.cachedImage]
             let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
 
             activityVC.popoverPresentationController?.sourceView = sender
             self.presentViewController(activityVC, animated: true, completion: nil)
-        }
     }
 //TODO:    after picking the image, can call the camera here?
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
@@ -169,27 +155,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let contextSize: CGSize = contextImage.size
 
         var resultImage: UIImage!
-        var posX: CGFloat = 0.0
-        var posY: CGFloat = 0.0
         var cgwidth: CGFloat = 0.0
         var cgheight: CGFloat = 0.0
 
         // See what size is longer and create the center off of that
         if contextSize.width > contextSize.height {
-//            posX = ((contextSize.width - contextSize.height) / 2)
-//            posY = 0
             cgwidth = contextSize.height
             cgheight = contextSize.height
         } else {
-//            posX = 0
-//            posY = ((contextSize.height - contextSize.width) / 2)
             cgwidth = contextSize.width
             cgheight = contextSize.width
         }
 
         print("done calculating frame")
         if(photoPicked==false){
-            let rect: CGRect = CGRectMake(cgwidth/2, posY, cgwidth/2, cgheight)
+            let rect: CGRect = CGRectMake(cgwidth/2, 0, cgwidth/2, cgheight)
 
             // Create bitmap image from context using the rect
             let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage, rect)!
@@ -200,13 +180,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         if(photoPicked==true){
             resultImage = UIImage(CGImage: cachedImage.CGImage!)
-            /*  combining the overlay and the user-photo  */
+
             UIGraphicsBeginImageContext( CGSizeMake(cgwidth,cgwidth) );
 
-            /*  for some reason I have to push the user-photo
-             down 60 pixels for it to show correctly as it
-             was edited.
-             */
             contextImage.drawAtPoint(CGPoint(x: 0, y: 0))
             cachedImage.drawAtPoint(CGPoint(x: cgwidth/2, y: 0))
 
