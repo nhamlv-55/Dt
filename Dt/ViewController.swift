@@ -39,6 +39,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     var cachedImage: UIImage!
 
     var photoPicked: Bool!
+
+    let backgroundPic = UIImage(named: "background")
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photoPicked = false
@@ -50,8 +52,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                                                 multiplier:1.0,
                                                 constant:0);
         ImageView.addConstraint(ratioConstraint)
-        ImageView.layer.borderWidth = 2
-        ImageView.layer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5).CGColor
+//        ImageView.layer.borderWidth = 2
+//        ImageView.layer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5).CGColor
+        ImageView.image=backgroundPic
         // Do any additional setup after loading the view, typically from a nib.
 
     }
@@ -77,6 +80,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func CameraAction(sender: UIButton) {
+        cachedImage = nil
+        photoPicked = false
         let picker = UIImagePickerController()
         picker.sourceType = UIImagePickerControllerSourceType.Camera
         picker.allowsEditing = false
@@ -108,19 +113,39 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             activityVC.popoverPresentationController?.sourceView = sender
             self.presentViewController(activityVC, animated: true, completion: nil)
     }
+
 //TODO:    after picking the image, can call the camera here?
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        print(picker.sourceType)
         if(picker.sourceType == UIImagePickerControllerSourceType.Camera){
             print("use the camera")
-            let imageToSave = info[UIImagePickerControllerOriginalImage] as! UIImage
-            UIImageWriteToSavedPhotosAlbum(self.cropToSquare(imageToSave, photoPicked: photoPicked), nil, nil, nil)
+            let rawImage = info[UIImagePickerControllerOriginalImage] as! UIImage
+
+
+
+            let imageToSave = cropToSquare(rawImage, photoPicked: photoPicked)
+            UIImageWriteToSavedPhotosAlbum(imageToSave, nil, nil, nil)
             photoPicked=false
             self.dismissViewControllerAnimated(true, completion: nil)
 
         }else{//Open an image
-            ImageView.image = info[UIImagePickerControllerOriginalImage] as? UIImage
             cachedImage = info[UIImagePickerControllerOriginalImage] as? UIImage
+            if(cachedImage.size.height != cachedImage.size.width){
+                var resultImage = UIImage(CGImage: cachedImage.CGImage!)
+                let size = max(cachedImage.size.height, cachedImage.size.width)
+                UIGraphicsBeginImageContext( CGSizeMake(size, size) );
+
+                backgroundPic!.drawInRect(CGRect(x: 0, y: 0, width: size, height: size))
+                cachedImage.drawAtPoint(CGPoint(x: size/2, y: 0))
+
+                resultImage = UIGraphicsGetImageFromCurrentImageContext();
+                
+                UIGraphicsEndImageContext();
+                ImageView.image = resultImage
+            }else{
+                ImageView.image = info[UIImagePickerControllerOriginalImage] as? UIImage
+
+            }
+
             photoPicked = true
             let camera = UIImagePickerController()
             print("get camera")
@@ -138,7 +163,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
             overlayFrame.addSubview(overlayImage1)
             overlayFrame.addSubview(overlayImage2)
-            overlayFrame.alpha = 0.5
+            overlayFrame.alpha = 0.8
 
             camera.cameraOverlayView = overlayFrame
             if let topController = UIApplication.topViewController() {
@@ -176,6 +201,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
             // Create a new image based on the imageRef and rotate back to the original orientation
             resultImage = UIImage(CGImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+            var tempImage: UIImage
+
+            UIGraphicsBeginImageContext( CGSizeMake(cgwidth,cgwidth) );
+
+            backgroundPic!.drawInRect(CGRect(x: 0, y: 0, width: cgwidth, height: cgwidth))
+            resultImage.drawAtPoint(CGPoint(x: cgwidth/2, y: 0))
+
+            tempImage = UIGraphicsGetImageFromCurrentImageContext();
+
+            UIGraphicsEndImageContext();
+
+            self.ImageView.image = tempImage
 
         }
         if(photoPicked==true){
@@ -189,8 +226,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             resultImage = UIGraphicsGetImageFromCurrentImageContext();
             
             UIGraphicsEndImageContext();
+            self.ImageView.image = resultImage
         }
-        self.ImageView.image = resultImage
+
         self.cachedImage = resultImage
         return resultImage
 
