@@ -235,7 +235,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
 
         if(photoPicked==false){
-
             print(image.imageOrientation.rawValue)
             var rect: CGRect!
             switch image.imageOrientation.rawValue {
@@ -243,15 +242,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
                 break
             case 1:
-                rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
+                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
                 break
             case 2:
-                rect = CGRectMake(0, 0, shorterSide/2, shorterSide)
+                rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
                 break
             case 3:
                 rect = CGRectMake(0, 0, shorterSide, shorterSide/2)
                 break
-            //                    rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
             default:
                 rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
 
@@ -281,23 +279,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             var rect: CGRect!
             switch image.imageOrientation.rawValue {
             case 0:
-                rect = CGRectMake(0, 0, shorterSide/2, shorterSide)
-                break
-            case 1:
-                rect = CGRectMake(0, 0, shorterSide, shorterSide/2)
-                break
-            case 2:
                 rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
                 break
-            case 3:
+            case 1:
+                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
+                break
+            case 2:
                 rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
                 break
-            //                    rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
+            case 3:
+                rect = CGRectMake(0, 0, shorterSide, shorterSide/2)
+                break
             default:
                 rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
 
             }
-
             // Create bitmap image from context using the rect
             let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage, rect)!
 
