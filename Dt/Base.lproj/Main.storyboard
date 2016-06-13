@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -19,47 +20,65 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7TQ-MQ-JTs">
-                                <rect key="frame" x="506" y="285" width="54" height="30"/>
+                                <rect key="frame" x="273" y="550" width="54" height="30"/>
                                 <state key="normal" title="Camera"/>
                                 <connections>
                                     <action selector="CameraAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Qha-BC-0tV"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lhF-xe-0hY">
-                                <rect key="frame" x="40" y="40" width="281" height="540"/>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-UO-lIf">
-                                <rect key="frame" x="468" y="40" width="92" height="30"/>
-                                <state key="normal" title="Photo Library"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-UO-lIf">
+                                <rect key="frame" x="30" y="550" width="92" height="30"/>
+                                <state key="normal" title="Lib"/>
                                 <connections>
                                     <action selector="PhotoLibAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Fj9-d3-CAH"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HBD-38-Jfo">
-                                <rect key="frame" x="520" y="550" width="40" height="30"/>
+                                <rect key="frame" x="530" y="550" width="40" height="30"/>
                                 <state key="normal" title="Share"/>
                                 <connections>
                                     <action selector="ShareAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="92O-S0-U7G"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lhF-xe-0hY">
+                                <rect key="frame" x="20" y="-13" width="560" height="560"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="lhF-xe-0hY" secondAttribute="height" multiplier="1:1" id="cdo-7Y-Csz"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="HBD-38-Jfo" secondAttribute="bottom" constant="20" id="0h4-jW-lkb"/>
+                            <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="Om8-UO-lIf" secondAttribute="bottom" constant="20" id="1Mh-in-VyO"/>
+                            <constraint firstItem="lhF-xe-0hY" firstAttribute="top" secondItem="kX2-rq-wyd" secondAttribute="bottom" id="64Q-wk-oqD"/>
+                            <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="7TQ-MQ-JTs" secondAttribute="bottom" constant="20" id="7tH-Wg-W8f"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="lhF-xe-0hY" secondAttribute="trailing" id="Cqa-x7-dpa"/>
+                            <constraint firstItem="Om8-UO-lIf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="10" id="Dr3-y4-xtG"/>
+                            <constraint firstItem="7TQ-MQ-JTs" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ECV-Ya-Osa"/>
                             <constraint firstItem="Om8-UO-lIf" firstAttribute="top" secondItem="kX2-rq-wyd" secondAttribute="bottom" constant="20" id="HIg-O0-i1Y"/>
                             <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="lhF-xe-0hY" secondAttribute="bottom" constant="20" id="PWG-Xt-aQ7"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="HBD-38-Jfo" secondAttribute="trailing" constant="20" id="W4h-s7-JPE"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="HBD-38-Jfo" secondAttribute="trailing" constant="10" id="W4h-s7-JPE"/>
                             <constraint firstItem="7TQ-MQ-JTs" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Yi0-gX-vfB"/>
                             <constraint firstItem="lhF-xe-0hY" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="hv5-WC-jB5"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Om8-UO-lIf" secondAttribute="trailing" constant="20" id="itC-st-7aZ"/>
                             <constraint firstItem="lhF-xe-0hY" firstAttribute="top" secondItem="kX2-rq-wyd" secondAttribute="bottom" constant="20" id="tOG-3p-Ut4"/>
                             <constraint firstAttribute="trailingMargin" secondItem="7TQ-MQ-JTs" secondAttribute="trailing" constant="20" id="ty5-VX-HpL"/>
                             <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="lhF-xe-0hY" secondAttribute="bottom" id="u7o-QI-xaY"/>
+                            <constraint firstItem="lhF-xe-0hY" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="uLK-IB-dIW"/>
                             <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="lhF-xe-0hY" secondAttribute="bottom" constant="20" id="yvc-YF-WeS"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
+                                <exclude reference="hv5-WC-jB5"/>
+                                <exclude reference="tOG-3p-Ut4"/>
+                                <exclude reference="HIg-O0-i1Y"/>
+                                <exclude reference="itC-st-7aZ"/>
+                                <exclude reference="PWG-Xt-aQ7"/>
                                 <exclude reference="u7o-QI-xaY"/>
+                                <exclude reference="yvc-YF-WeS"/>
+                                <exclude reference="Yi0-gX-vfB"/>
+                                <exclude reference="ty5-VX-HpL"/>
                             </mask>
                         </variation>
                     </view>

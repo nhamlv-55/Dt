@@ -28,7 +28,7 @@ extension UIApplication {
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    
+
     @IBOutlet weak var PhotoLib: UIButton!
 
     @IBOutlet weak var Camera: UIButton!
@@ -41,19 +41,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     var photoPicked: Bool!
 
     let backgroundPic = UIImage(named: "background")
+
+    let camera = UIImagePickerController()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photoPicked = false
-        let ratioConstraint = NSLayoutConstraint(item:self.ImageView,
-                                                attribute:NSLayoutAttribute.Height,
-                                                relatedBy:NSLayoutRelation.Equal,
-                                                toItem:self.ImageView,
-                                                attribute:NSLayoutAttribute.Width,
-                                                multiplier:1.0,
-                                                constant:0);
-        ImageView.addConstraint(ratioConstraint)
-//        ImageView.layer.borderWidth = 2
-//        ImageView.layer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5).CGColor
         ImageView.image=backgroundPic
         // Do any additional setup after loading the view, typically from a nib.
 
@@ -63,65 +55,88 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.Portrait
     }
 
     @IBAction func PhotoLibAction(sender: UIButton) {
         let picker = UIImagePickerController()
-        
+
         picker.delegate = self
-        
+
         picker.sourceType = .PhotoLibrary
-        
+
         presentViewController(picker, animated: true, completion: nil)
-        
+
     }
-    
+
     @IBAction func CameraAction(sender: UIButton) {
         cachedImage = nil
         photoPicked = false
-        let picker = UIImagePickerController()
-        picker.sourceType = UIImagePickerControllerSourceType.Camera
-        picker.allowsEditing = false
+        camera.sourceType = UIImagePickerControllerSourceType.Camera
+        camera.allowsEditing = false
+        camera.showsCameraControls = false
+        camera.delegate = self
 
-        picker.delegate = self
-        let overlayFrame = UIImageView(frame: CGRectMake(0, 0, view.frame.size.width, view.frame.size.height))
+        let longerSide = max(view.frame.size.height, view.frame.size.width);
+        let shorterSide = min(view.frame.size.height, view.frame.size.width);
+
+        let overlayFrame = UIImageView(frame: CGRectMake(0, 0, longerSide, longerSide))
+        overlayFrame.userInteractionEnabled = true
+
         //crop to square
-        let overlayImage1 = UIImageView(frame: CGRectMake(view.frame.size.height, 0, view.frame.size.width-view.frame.size.height, view.frame.size.height))
-        overlayImage1.image = UIImage(named: "black")
+        let overlayImage1 = UIImageView(frame: CGRectMake(shorterSide, 0, longerSide-shorterSide, shorterSide))
+        overlayImage1.backgroundColor = UIColor.whiteColor()
+        overlayImage1.userInteractionEnabled = false
+        overlayImage1.exclusiveTouch = false
+
+        let button = UIButton(frame: CGRect(x: shorterSide + (longerSide-shorterSide)/2-50, y: shorterSide/2-50, width: 100, height: 100))
+        button.layer.cornerRadius = 50
+        button.backgroundColor = UIColor.greenColor()
+        button.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
+
+
+        let overlayImage3 = UIImageView(frame: CGRectMake(0, shorterSide, shorterSide, longerSide-shorterSide))
+        overlayImage3.backgroundColor = UIColor.whiteColor()
+
+        let button2 = UIButton(frame: CGRect(x: shorterSide/2-50, y: shorterSide + (longerSide-shorterSide)/2-50, width: 100, height: 100))
+        button2.layer.cornerRadius = 50
+        button2.backgroundColor = UIColor.greenColor()
+        button2.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
         //crop to half
-        let overlayImage2 = UIImageView(frame: CGRectMake(0, 0,view.frame.size.height/2, view.frame.size.height))
-        overlayImage2.image = UIImage(named: "black")
+        let overlayImage2 = UIImageView(frame: CGRectMake(0, 0, shorterSide/2, longerSide))
+        overlayImage2.backgroundColor = UIColor.blackColor()
+        overlayImage2.alpha = 0.7
 
         overlayFrame.addSubview(overlayImage1)
         overlayFrame.addSubview(overlayImage2)
-        overlayFrame.alpha = 0.5
+        overlayFrame.addSubview(overlayImage3)
+        overlayFrame.addSubview(button)
+        overlayFrame.addSubview(button2)
 
-        picker.cameraOverlayView = overlayFrame
-        presentViewController(picker, animated: true, completion: nil)
-        
+        camera.cameraOverlayView = overlayFrame
+        presentViewController(camera, animated: true, completion: nil)
+
     }
 
+    func takePhoto(){
+        camera.takePicture()
+    }
 
     @IBAction func ShareAction(sender: UIButton) {
         print("call share")
-            let objectsToShare = [self.cachedImage]
-            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+        let objectsToShare = [self.cachedImage]
+        let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
 
-            activityVC.popoverPresentationController?.sourceView = sender
-            self.presentViewController(activityVC, animated: true, completion: nil)
+        activityVC.popoverPresentationController?.sourceView = sender
+        self.presentViewController(activityVC, animated: true, completion: nil)
     }
 
-//TODO:    after picking the image, can call the camera here?
+    //TODO:    after picking the image, can call the camera here?
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         if(picker.sourceType == UIImagePickerControllerSourceType.Camera){
-            print("use the camera")
             let rawImage = info[UIImagePickerControllerOriginalImage] as! UIImage
-
-
-
             let imageToSave = cropToSquare(rawImage, photoPicked: photoPicked)
             UIImageWriteToSavedPhotosAlbum(imageToSave, nil, nil, nil)
             photoPicked=false
@@ -138,7 +153,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 cachedImage.drawAtPoint(CGPoint(x: size/2, y: 0))
 
                 resultImage = UIGraphicsGetImageFromCurrentImageContext();
-                
+
                 UIGraphicsEndImageContext();
                 ImageView.image = resultImage
             }else{
@@ -147,23 +162,47 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             }
 
             photoPicked = true
-            let camera = UIImagePickerController()
-            print("get camera")
             camera.sourceType = UIImagePickerControllerSourceType.Camera
             camera.allowsEditing = false
             camera.delegate = self
+            camera.showsCameraControls = false
 
-            let overlayFrame = UIImageView(frame: CGRectMake(0, 0, view.frame.size.width, view.frame.size.height))
+            let longerSide = max(view.frame.size.height, view.frame.size.width);
+            let shorterSide = min(view.frame.size.height, view.frame.size.width);
+
+            let overlayFrame = UIImageView(frame: CGRectMake(0, 0, longerSide, longerSide))
+            overlayFrame.userInteractionEnabled = true
+
             //crop to square
-            let overlayImage1 = UIImageView(frame: CGRectMake(view.frame.size.height, 0, view.frame.size.width-view.frame.size.height, view.frame.size.height))
-            overlayImage1.image = UIImage(named: "black")
+            let overlayImage1 = UIImageView(frame: CGRectMake(shorterSide, 0, longerSide-shorterSide, shorterSide))
+            overlayImage1.backgroundColor = UIColor.whiteColor()
+            overlayImage1.userInteractionEnabled = false
+            overlayImage1.exclusiveTouch = false
+
+            let button = UIButton(frame: CGRect(x: shorterSide + (longerSide-shorterSide)/2-50, y: shorterSide/2-50, width: 100, height: 100))
+            button.layer.cornerRadius = 50
+            button.backgroundColor = UIColor.greenColor()
+            button.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
+
+
+            let overlayImage3 = UIImageView(frame: CGRectMake(0, shorterSide, shorterSide, longerSide-shorterSide))
+            overlayImage3.backgroundColor = UIColor.whiteColor()
+
+            let button2 = UIButton(frame: CGRect(x: shorterSide/2-50, y: shorterSide + (longerSide-shorterSide)/2-50, width: 100, height: 100))
+            button2.layer.cornerRadius = 50
+            button2.backgroundColor = UIColor.greenColor()
+            button2.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
             //crop to half
-            let overlayImage2 = UIImageView(frame: CGRectMake(view.frame.size.height/2, 0, view.frame.size.height/2, view.frame.size.height))
+            let overlayImage2 = UIImageView(frame: CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide))
             overlayImage2.image = info[UIImagePickerControllerOriginalImage] as! UIImage
+            overlayImage2.alpha = 0.7
+            //            ----------------------------------
 
             overlayFrame.addSubview(overlayImage1)
             overlayFrame.addSubview(overlayImage2)
-            overlayFrame.alpha = 0.8
+            overlayFrame.addSubview(overlayImage3)
+            overlayFrame.addSubview(button)
+            overlayFrame.addSubview(button2)
 
             camera.cameraOverlayView = overlayFrame
             if let topController = UIApplication.topViewController() {
@@ -183,6 +222,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         var cgwidth: CGFloat = 0.0
         var cgheight: CGFloat = 0.0
 
+        let shorterSide = min(contextSize.height, contextSize.width)
+        let longerSide = max(contextSize.height, contextSize.width)
+
         // See what size is longer and create the center off of that
         if contextSize.width > contextSize.height {
             cgwidth = contextSize.height
@@ -192,9 +234,28 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             cgheight = contextSize.width
         }
 
-        print("done calculating frame")
         if(photoPicked==false){
-            let rect: CGRect = CGRectMake(cgwidth/2, 0, cgwidth/2, cgheight)
+
+            print(image.imageOrientation.rawValue)
+            var rect: CGRect!
+            switch image.imageOrientation.rawValue {
+            case 0:
+                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
+                break
+            case 1:
+                rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
+                break
+            case 2:
+                rect = CGRectMake(0, 0, shorterSide/2, shorterSide)
+                break
+            case 3:
+                rect = CGRectMake(0, 0, shorterSide, shorterSide/2)
+                break
+            //                    rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
+            default:
+                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
+
+            }
 
             // Create bitmap image from context using the rect
             let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage, rect)!
@@ -216,24 +277,49 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
         }
         if(photoPicked==true){
-            resultImage = UIImage(CGImage: cachedImage.CGImage!)
+            print(image.imageOrientation.rawValue)
+            var rect: CGRect!
+            switch image.imageOrientation.rawValue {
+            case 0:
+                rect = CGRectMake(0, 0, shorterSide/2, shorterSide)
+                break
+            case 1:
+                rect = CGRectMake(0, 0, shorterSide, shorterSide/2)
+                break
+            case 2:
+                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
+                break
+            case 3:
+                rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
+                break
+            //                    rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
+            default:
+                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
+
+            }
+
+            // Create bitmap image from context using the rect
+            let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage, rect)!
+
+            // Create a new image based on the imageRef and rotate back to the original orientation
+            resultImage = UIImage(CGImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
 
             UIGraphicsBeginImageContext( CGSizeMake(cgwidth,cgwidth) );
-
-            contextImage.drawAtPoint(CGPoint(x: 0, y: 0))
+            
+            resultImage.drawAtPoint(CGPoint(x: 0, y: 0))
             cachedImage.drawAtPoint(CGPoint(x: cgwidth/2, y: 0))
-
+            
             resultImage = UIGraphicsGetImageFromCurrentImageContext();
             
             UIGraphicsEndImageContext();
             self.ImageView.image = resultImage
         }
-
+        
         self.cachedImage = resultImage
         return resultImage
-
+        
     }
-
+    
     
 }
 
