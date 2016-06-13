@@ -47,6 +47,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         super.viewDidLoad()
         self.photoPicked = false
         ImageView.image=backgroundPic
+        ImageView.layer.borderWidth = 0
         // Do any additional setup after loading the view, typically from a nib.
 
     }
@@ -58,6 +59,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.Portrait
+    }
+
+    override func prefersStatusBarHidden() -> Bool {
+        return true;
     }
 
     @IBAction func PhotoLibAction(sender: UIButton) {
@@ -100,10 +105,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let overlayImage3 = UIImageView(frame: CGRectMake(0, shorterSide, shorterSide, longerSide-shorterSide))
         overlayImage3.backgroundColor = UIColor.whiteColor()
 
-        let button2 = UIButton(frame: CGRect(x: shorterSide/2-50, y: shorterSide + (longerSide-shorterSide)/2-50, width: 100, height: 100))
-        button2.layer.cornerRadius = 50
+        let button2 = UIButton(frame: CGRect(x: shorterSide/2-35, y: shorterSide + 35, width: 70, height: 70))
+        button2.layer.cornerRadius = 35
         button2.backgroundColor = UIColor.greenColor()
         button2.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
+
+        let quitCameraButton = UIButton(frame: CGRect(x: shorterSide/2-15, y: longerSide-45, width: 30, height: 30))
+        quitCameraButton.layer.cornerRadius = 15
+        quitCameraButton.backgroundColor = UIColor.redColor()
+        quitCameraButton.addTarget(self, action: Selector("quitCamera"), forControlEvents: UIControlEvents.TouchUpInside)
         //crop to half
         let overlayImage2 = UIImageView(frame: CGRectMake(0, 0, shorterSide/2, longerSide))
         overlayImage2.backgroundColor = UIColor.blackColor()
@@ -114,6 +124,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         overlayFrame.addSubview(overlayImage3)
         overlayFrame.addSubview(button)
         overlayFrame.addSubview(button2)
+        overlayFrame.addSubview(quitCameraButton)
 
         camera.cameraOverlayView = overlayFrame
         presentViewController(camera, animated: true, completion: nil)
@@ -124,6 +135,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         camera.takePicture()
     }
 
+    func quitCamera(){
+        camera.dismissViewControllerAnimated(true, completion: nil)
+    }
     @IBAction func ShareAction(sender: UIButton) {
         print("call share")
         let objectsToShare = [self.cachedImage]
@@ -192,6 +206,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             button2.layer.cornerRadius = 50
             button2.backgroundColor = UIColor.greenColor()
             button2.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
+
+            let quitCameraButton = UIButton(frame: CGRect(x: shorterSide/2-15, y: longerSide-45, width: 30, height: 30))
+            quitCameraButton.layer.cornerRadius = 15
+            quitCameraButton.backgroundColor = UIColor.redColor()
+            quitCameraButton.addTarget(self, action: Selector("quitCamera"), forControlEvents: UIControlEvents.TouchUpInside)
             //crop to half
             let overlayImage2 = UIImageView(frame: CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide))
             overlayImage2.image = info[UIImagePickerControllerOriginalImage] as! UIImage
