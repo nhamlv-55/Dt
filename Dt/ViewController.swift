@@ -202,8 +202,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             let overlayImage3 = UIImageView(frame: CGRectMake(0, shorterSide, shorterSide, longerSide-shorterSide))
             overlayImage3.backgroundColor = UIColor.whiteColor()
 
-            let button2 = UIButton(frame: CGRect(x: shorterSide/2-50, y: shorterSide + (longerSide-shorterSide)/2-50, width: 100, height: 100))
-            button2.layer.cornerRadius = 50
+            let button2 = UIButton(frame: CGRect(x: shorterSide/2-35, y: shorterSide + 35, width: 70, height: 70))
+            button2.layer.cornerRadius = 35
             button2.backgroundColor = UIColor.greenColor()
             button2.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
 
@@ -222,6 +222,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             overlayFrame.addSubview(overlayImage3)
             overlayFrame.addSubview(button)
             overlayFrame.addSubview(button2)
+            overlayFrame.addSubview(quitCameraButton)
 
             camera.cameraOverlayView = overlayFrame
             if let topController = UIApplication.topViewController() {
