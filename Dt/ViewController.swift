@@ -232,8 +232,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
 
     func cropToSquare(image: UIImage, photoPicked: Bool) -> UIImage {
-        print("call crop")
-        print(photoPicked)
         let contextImage: UIImage = UIImage(CGImage: image.CGImage!)
 
         let contextSize: CGSize = contextImage.size
@@ -308,7 +306,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
                 break
             case 3:
-                rect = CGRectMake(0, 0, shorterSide, shorterSide/2)
+                rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
                 break
             default:
                 rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
