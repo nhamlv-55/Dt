@@ -138,12 +138,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         shutterButton.setBackgroundImage(cameraIcon, forState: .Normal)
         shutterButton.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
 
-        let frontCameraButton = UIButton(frame: CGRect(x: shorterSide-80, y: shorterSide + (longerSide-shorterSide)/2-20, width: 40, height: 40))
+        let frontCameraButton = UIButton(frame: CGRect(x: shorterSide-70, y: shorterSide + (longerSide-shorterSide)/2-20, width: 40, height: 40))
         frontCameraButton.layer.cornerRadius = 20
         frontCameraButton.setBackgroundImage(UIImage(named: "frontCameraIcon"), forState: .Normal)
         frontCameraButton.addTarget(self, action: #selector(ViewController.frontCamera), forControlEvents: UIControlEvents.TouchUpInside)
 
-        let quitCameraButton = UIButton(frame: CGRect(x: 40, y: shorterSide + (longerSide-shorterSide)/2-20, width: 40, height: 40))
+        let quitCameraButton = UIButton(frame: CGRect(x: 30, y: shorterSide + (longerSide-shorterSide)/2-20, width: 40, height: 40))
         quitCameraButton.layer.cornerRadius = 20
         quitCameraButton.setBackgroundImage(UIImage(named: "cancelIcon"), forState: .Normal)
         quitCameraButton.addTarget(self, action: #selector(ViewController.quitCamera), forControlEvents: UIControlEvents.TouchUpInside)
