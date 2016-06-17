@@ -127,28 +127,25 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         overlayImage1.userInteractionEnabled = false
         overlayImage1.exclusiveTouch = false
 
-        let button = UIButton(frame: CGRect(x: shorterSide + (longerSide-shorterSide)/2-50, y: shorterSide/2-50, width: 100, height: 100))
-        button.layer.cornerRadius = 50
-        button.backgroundColor = UIColor.greenColor()
-        button.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
+        let cameraIcon = UIImage(named: "cameraIcon")!
 
 
         let overlayImage3 = UIImageView(frame: CGRectMake(0, shorterSide, shorterSide, longerSide-shorterSide))
         overlayImage3.backgroundColor = UIColor.whiteColor()
 
-        let button2 = UIButton(frame: CGRect(x: shorterSide/2-35, y: shorterSide + 35, width: 70, height: 70))
-        button2.layer.cornerRadius = 35
-        button2.backgroundColor = UIColor.greenColor()
-        button2.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
+        let shutterButton = UIButton(frame: CGRect(x: shorterSide/2-40, y: shorterSide + (longerSide-shorterSide)/2-40, width: 80, height: 80))
+        shutterButton.layer.cornerRadius = 40
+        shutterButton.setBackgroundImage(cameraIcon, forState: .Normal)
+        shutterButton.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
 
-        let frontCameraButton = UIButton(frame: CGRect(x: shorterSide-60, y: shorterSide + (longerSide-shorterSide)/2-15, width: 30, height: 30))
-        frontCameraButton.layer.cornerRadius = 15
-        frontCameraButton.backgroundColor = UIColor.blueColor()
+        let frontCameraButton = UIButton(frame: CGRect(x: shorterSide-80, y: shorterSide + (longerSide-shorterSide)/2-20, width: 40, height: 40))
+        frontCameraButton.layer.cornerRadius = 20
+        frontCameraButton.setBackgroundImage(UIImage(named: "frontCameraIcon"), forState: .Normal)
         frontCameraButton.addTarget(self, action: #selector(ViewController.frontCamera), forControlEvents: UIControlEvents.TouchUpInside)
 
-        let quitCameraButton = UIButton(frame: CGRect(x: 30, y: shorterSide + (longerSide-shorterSide)/2-15, width: 30, height: 30))
-        quitCameraButton.layer.cornerRadius = 15
-        quitCameraButton.backgroundColor = UIColor.redColor()
+        let quitCameraButton = UIButton(frame: CGRect(x: 40, y: shorterSide + (longerSide-shorterSide)/2-20, width: 40, height: 40))
+        quitCameraButton.layer.cornerRadius = 20
+        quitCameraButton.setBackgroundImage(UIImage(named: "cancelIcon"), forState: .Normal)
         quitCameraButton.addTarget(self, action: #selector(ViewController.quitCamera), forControlEvents: UIControlEvents.TouchUpInside)
         //crop to half
 
@@ -156,8 +153,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         overlayFrame.addSubview(overlayImage1)
         overlayFrame.addSubview(overlayPic)
         overlayFrame.addSubview(overlayImage3)
-        overlayFrame.addSubview(button)
-        overlayFrame.addSubview(button2)
+        overlayFrame.addSubview(shutterButton)
         overlayFrame.addSubview(quitCameraButton)
         overlayFrame.addSubview(frontCameraButton)
 
@@ -185,11 +181,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 let shorterSide = min(rawImage.size.height, rawImage.size.width)
 
                 let flippedImage = UIImage(CGImage: rawImage.CGImage!, scale: rawImage.scale, orientation:.LeftMirrored)
+
                 UIGraphicsBeginImageContext( CGSizeMake(shorterSide,shorterSide) );
-
                 flippedImage.drawAtPoint(CGPoint(x: 0, y: 0))
-
                 let tempImage = UIGraphicsGetImageFromCurrentImageContext();
+                
                 imageToSave = cropToSquare(tempImage, photoPicked: photoPicked)
 
             }else{

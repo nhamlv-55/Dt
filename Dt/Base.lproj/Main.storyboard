@@ -19,23 +19,35 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7TQ-MQ-JTs">
-                                <rect key="frame" x="273" y="550" width="54" height="30"/>
-                                <state key="normal" title="Camera"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7TQ-MQ-JTs">
+                                <rect key="frame" x="260" y="480" width="80" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="RHE-fR-HVz"/>
+                                    <constraint firstAttribute="height" constant="80" id="tLy-6k-aaT"/>
+                                </constraints>
+                                <state key="normal" backgroundImage="cameraIcon"/>
                                 <connections>
                                     <action selector="CameraAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Qha-BC-0tV"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-UO-lIf">
-                                <rect key="frame" x="30" y="550" width="92" height="30"/>
-                                <state key="normal" title="Lib"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Om8-UO-lIf">
+                                <rect key="frame" x="30" y="520" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="6hh-a9-u4n"/>
+                                    <constraint firstAttribute="height" constant="40" id="ciw-Qj-hgs"/>
+                                </constraints>
+                                <state key="normal" image="addIcon"/>
                                 <connections>
                                     <action selector="PhotoLibAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Fj9-d3-CAH"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HBD-38-Jfo">
-                                <rect key="frame" x="530" y="550" width="40" height="30"/>
-                                <state key="normal" title="Share"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HBD-38-Jfo">
+                                <rect key="frame" x="530" y="520" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="eLZ-Cu-wgp"/>
+                                    <constraint firstAttribute="width" constant="40" id="qwe-16-GxN"/>
+                                </constraints>
+                                <state key="normal" image="shareIcon"/>
                                 <connections>
                                     <action selector="ShareAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="92O-S0-U7G"/>
                                 </connections>
@@ -49,10 +61,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="HBD-38-Jfo" secondAttribute="bottom" constant="20" id="0h4-jW-lkb"/>
-                            <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="Om8-UO-lIf" secondAttribute="bottom" constant="20" id="1Mh-in-VyO"/>
+                            <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="HBD-38-Jfo" secondAttribute="bottom" constant="40" id="0h4-jW-lkb"/>
+                            <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="Om8-UO-lIf" secondAttribute="bottom" constant="40" id="1Mh-in-VyO"/>
                             <constraint firstItem="lhF-xe-0hY" firstAttribute="top" secondItem="kX2-rq-wyd" secondAttribute="bottom" id="64Q-wk-oqD"/>
-                            <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="7TQ-MQ-JTs" secondAttribute="bottom" constant="20" id="7tH-Wg-W8f"/>
+                            <constraint firstItem="AL8-ua-u8m" firstAttribute="top" secondItem="7TQ-MQ-JTs" secondAttribute="bottom" constant="40" id="7tH-Wg-W8f"/>
                             <constraint firstAttribute="trailing" secondItem="lhF-xe-0hY" secondAttribute="trailing" id="Cqa-x7-dpa"/>
                             <constraint firstItem="Om8-UO-lIf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="10" id="Dr3-y4-xtG"/>
                             <constraint firstItem="7TQ-MQ-JTs" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ECV-Ya-Osa"/>
@@ -94,4 +106,9 @@
             <point key="canvasLocation" x="305" y="429"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="addIcon" width="52" height="52"/>
+        <image name="cameraIcon" width="60" height="60"/>
+        <image name="shareIcon" width="60" height="60"/>
+    </resources>
 </document>
