@@ -43,6 +43,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     let backgroundPic = UIImage(named: "background")
 
     let camera = UIImagePickerController()
+
+    var flipped = false
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photoPicked = false
@@ -83,10 +85,39 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         camera.allowsEditing = false
         camera.showsCameraControls = false
         camera.delegate = self
-
+        camera.cameraDevice = .Rear
+        flipped = false
         let longerSide = max(view.frame.size.height, view.frame.size.width);
         let shorterSide = min(view.frame.size.height, view.frame.size.width);
 
+        let blackOverlay = UIImageView(frame: CGRectMake(0, 0, shorterSide/2, longerSide))
+        blackOverlay.backgroundColor = UIColor.blackColor()
+        blackOverlay.alpha = 0.7
+
+        camera.cameraOverlayView = setupOverlayFrame(longerSide, shorterSide: shorterSide, overlayPic: blackOverlay)
+        presentViewController(camera, animated: true, completion: nil)
+
+    }
+
+    func takePhoto(){
+        camera.takePicture()
+    }
+
+    func quitCamera(){
+        camera.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    func frontCamera(){
+        if(camera.cameraDevice == .Front){
+            camera.cameraDevice = .Rear
+            flipped = false
+        }else{
+            camera.cameraDevice = .Front
+            flipped = true
+        }
+    }
+
+    func setupOverlayFrame(longerSide: CGFloat, shorterSide: CGFloat, overlayPic: UIImageView)->UIImageView{
         let overlayFrame = UIImageView(frame: CGRectMake(0, 0, longerSide, longerSide))
         overlayFrame.userInteractionEnabled = true
 
@@ -110,34 +141,29 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         button2.backgroundColor = UIColor.greenColor()
         button2.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
 
-        let quitCameraButton = UIButton(frame: CGRect(x: shorterSide/2-15, y: longerSide-45, width: 30, height: 30))
+        let frontCameraButton = UIButton(frame: CGRect(x: shorterSide-60, y: shorterSide + (longerSide-shorterSide)/2-15, width: 30, height: 30))
+        frontCameraButton.layer.cornerRadius = 15
+        frontCameraButton.backgroundColor = UIColor.blueColor()
+        frontCameraButton.addTarget(self, action: #selector(ViewController.frontCamera), forControlEvents: UIControlEvents.TouchUpInside)
+
+        let quitCameraButton = UIButton(frame: CGRect(x: 30, y: shorterSide + (longerSide-shorterSide)/2-15, width: 30, height: 30))
         quitCameraButton.layer.cornerRadius = 15
         quitCameraButton.backgroundColor = UIColor.redColor()
         quitCameraButton.addTarget(self, action: #selector(ViewController.quitCamera), forControlEvents: UIControlEvents.TouchUpInside)
         //crop to half
-        let overlayImage2 = UIImageView(frame: CGRectMake(0, 0, shorterSide/2, longerSide))
-        overlayImage2.backgroundColor = UIColor.blackColor()
-        overlayImage2.alpha = 0.7
+
 
         overlayFrame.addSubview(overlayImage1)
-        overlayFrame.addSubview(overlayImage2)
+        overlayFrame.addSubview(overlayPic)
         overlayFrame.addSubview(overlayImage3)
         overlayFrame.addSubview(button)
         overlayFrame.addSubview(button2)
         overlayFrame.addSubview(quitCameraButton)
+        overlayFrame.addSubview(frontCameraButton)
 
-        camera.cameraOverlayView = overlayFrame
-        presentViewController(camera, animated: true, completion: nil)
-
+        return overlayFrame
     }
 
-    func takePhoto(){
-        camera.takePicture()
-    }
-
-    func quitCamera(){
-        camera.dismissViewControllerAnimated(true, completion: nil)
-    }
     @IBAction func ShareAction(sender: UIButton) {
         print("call share")
         let objectsToShare = [self.cachedImage]
@@ -150,8 +176,25 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //TODO:    after picking the image, can call the camera here?
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         if(picker.sourceType == UIImagePickerControllerSourceType.Camera){
+            print("flipped:")
+            print(flipped)
+            var imageToSave:UIImage
             let rawImage = info[UIImagePickerControllerOriginalImage] as! UIImage
-            let imageToSave = cropToSquare(rawImage, photoPicked: photoPicked)
+            if(flipped==true){
+                flipped = false
+                let shorterSide = min(rawImage.size.height, rawImage.size.width)
+
+                let flippedImage = UIImage(CGImage: rawImage.CGImage!, scale: rawImage.scale, orientation:.LeftMirrored)
+                UIGraphicsBeginImageContext( CGSizeMake(shorterSide,shorterSide) );
+
+                flippedImage.drawAtPoint(CGPoint(x: 0, y: 0))
+
+                let tempImage = UIGraphicsGetImageFromCurrentImageContext();
+                imageToSave = cropToSquare(tempImage, photoPicked: photoPicked)
+
+            }else{
+                imageToSave = cropToSquare(rawImage, photoPicked: photoPicked)
+            }
             UIImageWriteToSavedPhotosAlbum(imageToSave, nil, nil, nil)
             photoPicked=false
             self.dismissViewControllerAnimated(true, completion: nil)
@@ -184,47 +227,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             let longerSide = max(view.frame.size.height, view.frame.size.width);
             let shorterSide = min(view.frame.size.height, view.frame.size.width);
 
-            let overlayFrame = UIImageView(frame: CGRectMake(0, 0, longerSide, longerSide))
-            overlayFrame.userInteractionEnabled = true
+            let overlayImage = UIImageView(frame: CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide))
+            overlayImage.image = info[UIImagePickerControllerOriginalImage] as? UIImage
+            overlayImage.alpha = 0.7
 
-            //crop to square
-            let overlayImage1 = UIImageView(frame: CGRectMake(shorterSide, 0, longerSide-shorterSide, shorterSide))
-            overlayImage1.backgroundColor = UIColor.whiteColor()
-            overlayImage1.userInteractionEnabled = false
-            overlayImage1.exclusiveTouch = false
-
-            let button = UIButton(frame: CGRect(x: shorterSide + (longerSide-shorterSide)/2-50, y: shorterSide/2-50, width: 100, height: 100))
-            button.layer.cornerRadius = 50
-            button.backgroundColor = UIColor.greenColor()
-            button.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
-
-
-            let overlayImage3 = UIImageView(frame: CGRectMake(0, shorterSide, shorterSide, longerSide-shorterSide))
-            overlayImage3.backgroundColor = UIColor.whiteColor()
-
-            let button2 = UIButton(frame: CGRect(x: shorterSide/2-35, y: shorterSide + 35, width: 70, height: 70))
-            button2.layer.cornerRadius = 35
-            button2.backgroundColor = UIColor.greenColor()
-            button2.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
-
-            let quitCameraButton = UIButton(frame: CGRect(x: shorterSide/2-15, y: longerSide-45, width: 30, height: 30))
-            quitCameraButton.layer.cornerRadius = 15
-            quitCameraButton.backgroundColor = UIColor.redColor()
-            quitCameraButton.addTarget(self, action: #selector(ViewController.quitCamera), forControlEvents: UIControlEvents.TouchUpInside)
-            //crop to half
-            let overlayImage2 = UIImageView(frame: CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide))
-            overlayImage2.image = info[UIImagePickerControllerOriginalImage] as? UIImage
-            overlayImage2.alpha = 0.7
-            //            ----------------------------------
-
-            overlayFrame.addSubview(overlayImage1)
-            overlayFrame.addSubview(overlayImage2)
-            overlayFrame.addSubview(overlayImage3)
-            overlayFrame.addSubview(button)
-            overlayFrame.addSubview(button2)
-            overlayFrame.addSubview(quitCameraButton)
-
-            camera.cameraOverlayView = overlayFrame
+            camera.cameraOverlayView = setupOverlayFrame(longerSide, shorterSide: shorterSide, overlayPic: overlayImage)
             if let topController = UIApplication.topViewController() {
                 topController.presentViewController(camera, animated: true, completion: nil)
             }
@@ -246,12 +253,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             switch image.imageOrientation.rawValue {
             case 0:
                 rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
-                break
-            case 1:
-                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
-                break
-            case 2:
-                rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
                 break
             case 3:
                 rect = CGRectMake(0, 0, shorterSide, shorterSide/2)
@@ -285,13 +286,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             var rect: CGRect!
             switch image.imageOrientation.rawValue {
             case 0:
-                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
-                break
-            case 1:
-                rect = CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide)
-                break
-            case 2:
-                rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
+                rect = CGRectMake(0, 0, shorterSide/2, shorterSide)
                 break
             case 3:
                 rect = CGRectMake(0, shorterSide/2, shorterSide, shorterSide/2)
