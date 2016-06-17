@@ -99,7 +99,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let button = UIButton(frame: CGRect(x: shorterSide + (longerSide-shorterSide)/2-50, y: shorterSide/2-50, width: 100, height: 100))
         button.layer.cornerRadius = 50
         button.backgroundColor = UIColor.greenColor()
-        button.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
+        button.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
 
 
         let overlayImage3 = UIImageView(frame: CGRectMake(0, shorterSide, shorterSide, longerSide-shorterSide))
@@ -108,12 +108,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let button2 = UIButton(frame: CGRect(x: shorterSide/2-35, y: shorterSide + 35, width: 70, height: 70))
         button2.layer.cornerRadius = 35
         button2.backgroundColor = UIColor.greenColor()
-        button2.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
+        button2.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
 
         let quitCameraButton = UIButton(frame: CGRect(x: shorterSide/2-15, y: longerSide-45, width: 30, height: 30))
         quitCameraButton.layer.cornerRadius = 15
         quitCameraButton.backgroundColor = UIColor.redColor()
-        quitCameraButton.addTarget(self, action: Selector("quitCamera"), forControlEvents: UIControlEvents.TouchUpInside)
+        quitCameraButton.addTarget(self, action: #selector(ViewController.quitCamera), forControlEvents: UIControlEvents.TouchUpInside)
         //crop to half
         let overlayImage2 = UIImageView(frame: CGRectMake(0, 0, shorterSide/2, longerSide))
         overlayImage2.backgroundColor = UIColor.blackColor()
@@ -196,7 +196,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             let button = UIButton(frame: CGRect(x: shorterSide + (longerSide-shorterSide)/2-50, y: shorterSide/2-50, width: 100, height: 100))
             button.layer.cornerRadius = 50
             button.backgroundColor = UIColor.greenColor()
-            button.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
+            button.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
 
 
             let overlayImage3 = UIImageView(frame: CGRectMake(0, shorterSide, shorterSide, longerSide-shorterSide))
@@ -205,15 +205,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             let button2 = UIButton(frame: CGRect(x: shorterSide/2-35, y: shorterSide + 35, width: 70, height: 70))
             button2.layer.cornerRadius = 35
             button2.backgroundColor = UIColor.greenColor()
-            button2.addTarget(self, action: Selector("takePhoto"), forControlEvents: UIControlEvents.TouchUpInside)
+            button2.addTarget(self, action: #selector(ViewController.takePhoto), forControlEvents: UIControlEvents.TouchUpInside)
 
             let quitCameraButton = UIButton(frame: CGRect(x: shorterSide/2-15, y: longerSide-45, width: 30, height: 30))
             quitCameraButton.layer.cornerRadius = 15
             quitCameraButton.backgroundColor = UIColor.redColor()
-            quitCameraButton.addTarget(self, action: Selector("quitCamera"), forControlEvents: UIControlEvents.TouchUpInside)
+            quitCameraButton.addTarget(self, action: #selector(ViewController.quitCamera), forControlEvents: UIControlEvents.TouchUpInside)
             //crop to half
             let overlayImage2 = UIImageView(frame: CGRectMake(shorterSide/2, 0, shorterSide/2, shorterSide))
-            overlayImage2.image = info[UIImagePickerControllerOriginalImage] as! UIImage
+            overlayImage2.image = info[UIImagePickerControllerOriginalImage] as? UIImage
             overlayImage2.alpha = 0.7
             //            ----------------------------------
 
@@ -237,20 +237,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let contextSize: CGSize = contextImage.size
 
         var resultImage: UIImage!
-        var cgwidth: CGFloat = 0.0
-        var cgheight: CGFloat = 0.0
-
         let shorterSide = min(contextSize.height, contextSize.width)
         let longerSide = max(contextSize.height, contextSize.width)
-
-        // See what size is longer and create the center off of that
-        if contextSize.width > contextSize.height {
-            cgwidth = contextSize.height
-            cgheight = contextSize.height
-        } else {
-            cgwidth = contextSize.width
-            cgheight = contextSize.width
-        }
 
         if(photoPicked==false){
             print(image.imageOrientation.rawValue)
@@ -280,10 +268,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             resultImage = UIImage(CGImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
             var tempImage: UIImage
 
-            UIGraphicsBeginImageContext( CGSizeMake(cgwidth,cgwidth) );
+            UIGraphicsBeginImageContext( CGSizeMake(shorterSide,shorterSide) );
 
-            backgroundPic!.drawInRect(CGRect(x: 0, y: 0, width: cgwidth, height: cgwidth))
-            resultImage.drawAtPoint(CGPoint(x: cgwidth/2, y: 0))
+            backgroundPic!.drawInRect(CGRect(x: 0, y: 0, width: shorterSide, height: shorterSide))
+            resultImage.drawAtPoint(CGPoint(x: shorterSide/2, y: 0))
 
             tempImage = UIGraphicsGetImageFromCurrentImageContext();
 
@@ -318,10 +306,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             // Create a new image based on the imageRef and rotate back to the original orientation
             resultImage = UIImage(CGImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
 
-            UIGraphicsBeginImageContext( CGSizeMake(cgwidth,cgwidth) );
+            UIGraphicsBeginImageContext( CGSizeMake(shorterSide,shorterSide) );
             
             resultImage.drawAtPoint(CGPoint(x: 0, y: 0))
-            cachedImage.drawInRect(CGRect(x: cgwidth/2, y: 0, width: cgwidth/2, height: cgwidth))
+            cachedImage.drawInRect(CGRect(x: shorterSide/2, y: 0, width: shorterSide/2, height: shorterSide))
             
             resultImage = UIGraphicsGetImageFromCurrentImageContext();
             
