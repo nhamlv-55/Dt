@@ -321,7 +321,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             UIGraphicsBeginImageContext( CGSizeMake(cgwidth,cgwidth) );
             
             resultImage.drawAtPoint(CGPoint(x: 0, y: 0))
-            cachedImage.drawAtPoint(CGPoint(x: cgwidth/2, y: 0))
+            cachedImage.drawInRect(CGRect(x: cgwidth/2, y: 0, width: cgwidth/2, height: cgwidth))
             
             resultImage = UIGraphicsGetImageFromCurrentImageContext();
             
